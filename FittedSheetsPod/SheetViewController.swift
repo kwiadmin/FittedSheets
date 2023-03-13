@@ -186,7 +186,7 @@ public class SheetViewController: UIViewController {
     
     @objc func overlayTapped(_ gesture: UITapGestureRecognizer) {
         guard self.dismissOnOverlayTap else { return }
-        self.attemptDismiss(animated: true)
+        self.attemptDismiss()
     }
 
     private func addContentView() {
@@ -278,15 +278,11 @@ public class SheetViewController: UIViewController {
                 let animationDuration = TimeInterval(abs(velocity*0.0002) + 0.2)
                 
                 guard finalHeight > 0 || !self.dismissOnPull else {
-                    // Dismiss
-                    UIView.animate(withDuration: animationDuration, delay: 0, options: [.curveEaseOut], animations: {
-                        self.contentViewController.view.transform = CGAffineTransform(translationX: 0, y: self.contentViewController.view.bounds.height)
-                        self.view.backgroundColor = UIColor.clear
-                        self.transition.setPresentor(percentComplete: 1)
-                        self.overlayView.alpha = 0
-                    }, completion: { complete in
-                        self.attemptDismiss(animated: false)
-                    })
+                    self.contentViewController.view.transform = CGAffineTransform(translationX: 0, y: self.contentViewController.view.bounds.height)
+                    self.view.backgroundColor = UIColor.clear
+                    self.transition.setPresentor(percentComplete: 1)
+                    self.overlayView.alpha = 0
+                    self.attemptDismiss()
                     return
                 }
                 
@@ -425,7 +421,7 @@ public class SheetViewController: UIViewController {
         }
     }
     
-    public func attemptDismiss(animated: Bool) {
+    public func attemptDismiss(animated: Bool = false) {
         if self.shouldDismiss?(self) != false {
             if self.options.useInlineMode {
                 if animated {
